@@ -1,0 +1,18 @@
+{
+  "@context": "http://www.w3.org/ns/anno.jsonld",
+  "created": "2018-05-29T14:40:00",
+  "bodyValue": "This is a single comment",
+  "creator": "https://orcid.org/0000-0002-3504-3241",
+  "target": {
+    "selector": [{
+      "startSelector": {
+        "@type": "CssSelector",
+        "@value": "#start_01"
+      },
+      "endSelector": {
+        "@type": "CssSelector",
+        "@value": "#end_01"
+      }
+    }]
+  }
+}
