@@ -19,167 +19,167 @@
 /* Additional jQuery functions */
 jQuery.fn.extend({
   countWords: function () {
-    var text = $(this).text();
-    var regex = /\s+/gi;
-    var total_word_count = text.trim().replace(regex, ' ').split(' ').length;
-    var table_text = $(this).find('table').text();
-    var table_word_count = table_text.trim().replace(regex, ' ').split(' ').length;
+    var text = $(this).text()
+    var regex = /\s+/gi
+    var total_word_count = text.trim().replace(regex, ' ').split(' ').length
+    var table_text = $(this).find('table').text()
+    var table_word_count = table_text.trim().replace(regex, ' ').split(' ').length
     return total_word_count - table_word_count
   },
   countElements: function (css_selector) {
-    return $(this).find(css_selector).length;
+    return $(this).find(css_selector).length
   },
   findNumber: function (css_selector) {
-    var cur_count = 0;
-    var cur_el = $(this);
-    var found = false;
+    var cur_count = 0
+    var cur_el = $(this)
+    var found = false
     $(css_selector).each(function () {
       if (!found) {
-        cur_count++;
-        found = cur_el[0] === $(this)[0];
+        cur_count++
+        found = cur_el[0] === $(this)[0]
       }
-    });
-    return cur_count;
+    })
+    return cur_count
   },
   findHierarchicalNumber: function (css_selector) {
-    var cur_count = 1;
+    var cur_count = 1
     $(this).prevAll(css_selector).each(function () {
-      cur_count++;
-    });
-    var parents = $(this).parents(css_selector);
+      cur_count++
+    })
+    var parents = $(this).parents(css_selector)
     if (parents.length > 0) {
-      return $(parents[0]).findHierarchicalNumber(css_selector) + "." + cur_count;
+      return $(parents[0]).findHierarchicalNumber(css_selector) + "." + cur_count
     } else {
-      return cur_count;
+      return cur_count
     }
   },
   changeCSS: function (currentStyle) {
     if (currentStyle) {
-      var current_path = null;
+      var current_path = null
       $('link[rel="stylesheet"]').each(function () {
         if (current_path == null) {
-          var cur_href = $(this).attr('href');
+          var cur_href = $(this).attr('href')
           if (cur_href.match(/\.css$/)) {
-            var cur_index = cur_href.lastIndexOf('/');
+            var cur_index = cur_href.lastIndexOf('/')
             if (cur_index < 0) {
-              current_path = '';
+              current_path = ''
             } else {
-              current_path = cur_href.substring(0, cur_index + 1);
+              current_path = cur_href.substring(0, cur_index + 1)
             }
           }
         }
-      });
+      })
       if (current_path == null) {
-        current_path = '';
+        current_path = ''
       }
 
       if (currentStyle == '#rash_web_based_layout') { /* Transform to Web layout */
-        $('link[rel="stylesheet"]').remove();
-        var bootstrap_css = $(`<link rel="stylesheet" href="${current_path}bootstrap.min.css"/>`);
-        var rash_css = $(`<link rel="stylesheet" href="${current_path}rash.css"/>`);
-        bootstrap_css.appendTo($('head'));
-        rash_css.appendTo($('head'));
-        $('#layoutselection').text('Web-based');
-        $(this).hideCSS();
-        $(this).addHeaderHTML();
-        $(this).orderCaptions(false);
+        $('link[rel="stylesheet"]').remove()
+        var bootstrap_css = $(`<link rel="stylesheet" href="${current_path}bootstrap.min.css"/>`)
+        var rash_css = $(`<link rel="stylesheet" href="${current_path}rash.css"/>`)
+        bootstrap_css.appendTo($('head'))
+        rash_css.appendTo($('head'))
+        $('#layoutselection').text('Web-based')
+        $(this).hideCSS()
+        $(this).addHeaderHTML()
+        $(this).orderCaptions(false)
       } else if (currentStyle == '#rash_lncs_layout') { /* Transform to Springer LNCS layout */
-        $('link[rel="stylesheet"]').remove();
-        var lncs_css = $(`<link rel="stylesheet" href="${current_path}lncs.css"/>`);
-        lncs_css.appendTo($('head'));
-        $('#layoutselection').text('Springer LNCS');
-        $(this).hideCSS();
-        $(this).addHeaderLNCS();
-        $(this).orderCaptions(true, $(tablebox_selector));
+        $('link[rel="stylesheet"]').remove()
+        var lncs_css = $(`<link rel="stylesheet" href="${current_path}lncs.css"/>`)
+        lncs_css.appendTo($('head'))
+        $('#layoutselection').text('Springer LNCS')
+        $(this).hideCSS()
+        $(this).addHeaderLNCS()
+        $(this).orderCaptions(true, $(tablebox_selector))
       }
     }
   },
   toggleCSS: function () {
-    $('.footer ul').toggle();
+    $('.footer ul').toggle()
   },
   hideCSS: function () {
-    $('.footer ul').hide();
+    $('.footer ul').hide()
   },
   addHeaderHTML: function () {
     /* Reset header */
-    $('header').remove();
-    $('p.keywords').remove();
+    $('header').remove()
+    $('p.keywords').remove()
 
     /* Header title */
-    var header = $('<header class="page-header container cgen" data-rash-original-content=""></header>');
+    var header = $('<header class="page-header container cgen" data-rash-original-content=""></header>')
     header.prependTo($('body'))
-    var title_string = '';
-    var title_split = $('head title').html().split(" -- ");
+    var title_string = ''
+    var title_split = $('head title').html().split(" -- ")
     if (title_split.length == 1) {
-      title_string = title_split[0];
+      title_string = title_split[0]
     } else {
-      title_string = `${title_split[0]}<br /><small>${title_split[1]}</small>`;
+      title_string = `${title_split[0]}<br /><small>${title_split[1]}</small>`
     }
 
     header.append(`<h1 class="title">${title_string}</h1>`)
     /* /END Header title */
 
     /* Header author */
-    var list_of_authors = [];
+    var list_of_authors = []
     $('head meta[name="dc.creator"]').each(function () {
-      var current_value = $(this).attr('name');
-      var current_id = $(this).attr('about');
-      var current_name = $(this).attr('content');
-      var current_email = $(`head meta[about='${current_id}'][property='schema:email']`).attr('content');
-      var current_affiliations = [];
+      var current_value = $(this).attr('name')
+      var current_id = $(this).attr('about')
+      var current_name = $(this).attr('content')
+      var current_email = $(`head meta[about='${current_id}'][property='schema:email']`).attr('content')
+      var current_affiliations = []
       $(`head link[about='${current_id}'][property='schema:affiliation']`).each(function () {
-        var cur_affiliation_id = $(this).attr('href');
-        current_affiliations.push($(`head meta[about='${cur_affiliation_id}'][property='schema:name']`).attr('content'));
-      });
+        var cur_affiliation_id = $(this).attr('href')
+        current_affiliations.push($(`head meta[about='${cur_affiliation_id}'][property='schema:name']`).attr('content'))
+      })
 
       list_of_authors.push({
         "name": current_name,
         "email": current_email,
         "affiliation": current_affiliations
-      });
-    });
+      })
+    })
 
     for (var i = 0; i < list_of_authors.length; i++) {
-      var author = list_of_authors[i];
-      var author_element = $(`<address class="lead authors"></address>`);
+      var author = list_of_authors[i]
+      var author_element = $(`<address class="lead authors"></address>`)
       if (author['name'] != null) {
         var name_element_string = `<strong class="author_name">${author.name}</strong>`
         if (author['email'] != null) {
-          name_element_string += `<code class="email"><a href="mailto:${author.email}">${author.email}</a></code>`;
+          name_element_string += `<code class="email"><a href="mailto:${author.email}">${author.email}</a></code>`
         }
-        author_element.append(name_element_string);
+        author_element.append(name_element_string)
       }
 
       for (var j = 0; j < author.affiliation.length; j++) {
-        author_element.append(`<br /><span class="affiliation\">${author.affiliation[j].replace(/\s+/g, " ").replace(/, ?/g, ", ").trim()}</span>`);
+        author_element.append(`<br /><span class="affiliation\">${author.affiliation[j].replace(/\s+/g, " ").replace(/, ?/g, ", ").trim()}</span>`)
       }
       if (i == 0) {
-        author_element.insertAfter($("header h1"));
+        author_element.insertAfter($("header h1"))
       } else {
-        author_element.insertAfter($("header address:last-of-type"));
+        author_element.insertAfter($("header address:last-of-type"))
       }
     }
     /* /END Header author */
 
     /* ACM subjects */
-    var categories = $("meta[name='dcterms.subject']");
+    var categories = $("meta[name='dcterms.subject']")
     if (categories.length > 0) {
-      var list_of_categories = $(`<p class="acm_subject_categories"><strong>ACM Subject Categories</strong></p>`);
+      var list_of_categories = $(`<p class="acm_subject_categories"><strong>ACM Subject Categories</strong></p>`)
       categories.each(function () {
-        list_of_categories.append(`<br /><code>${$(this).attr("content").split(",").join(", ")}</code>`);
-      });
-      list_of_categories.appendTo(header);
+        list_of_categories.append(`<br /><code>${$(this).attr("content").split(",").join(", ")}</code>`)
+      })
+      list_of_categories.appendTo(header)
     }
     /* /END ACM subjects */
 
     /* Keywords */
-    var keywords = $('meta[property="prism:keyword"]');
+    var keywords = $('meta[property="prism:keyword"]')
     if (keywords.length > 0) {
-      var list_of_keywords = $('<ul class="list-inline"></ul>');
+      var list_of_keywords = $('<ul class="list-inline"></ul>')
       keywords.each(function () {
-        list_of_keywords.append(`<li><code>${$(this).attr("content")}</code></li>`);
-      });
-      $('<p class="keywords"><strong>Keywords</strong></p>').append(list_of_keywords).appendTo(header);
+        list_of_keywords.append(`<li><code>${$(this).attr("content")}</code></li>`)
+      })
+      $('<p class="keywords"><strong>Keywords</strong></p>').append(list_of_keywords).appendTo(header)
     }
     /* /END Keywords */
   },
@@ -187,114 +187,115 @@ jQuery.fn.extend({
    * layout specification of the Lecture Notes in Computer Science by Springer. */
   addHeaderLNCS: function () {
     /* Initialise the page again */
-    $(this).addHeaderHTML();
+    $(this).addHeaderHTML()
 
     /* Authors */
-    var authors = $('<address class="lead authors"></address>');
+    var authors = $('<address class="lead authors"></address>')
 
     /* Find all affiliations */
-    var list_of_affiliations = [];
+    var list_of_affiliations = []
     $('header .authors .affiliation').each(function () {
-      var cur_affiliation = $(this).text().trim();
+      var cur_affiliation = $(this).text().trim()
       if (list_of_affiliations.indexOf(cur_affiliation) == -1) {
-        list_of_affiliations.push(cur_affiliation);
+        list_of_affiliations.push(cur_affiliation)
       }
-    });
+    })
 
     /* Find all authors metadata */
-    var author_names = [];
-    var author_affiliation_index = [];
-    var author_email = [];
+    var author_names = []
+    var author_affiliation_index = []
+    var author_email = []
     $('header .authors').each(function () {
       /* Name */
-      author_names.push($(this).find('.author_name').text().trim());
+      author_names.push($(this).find('.author_name').text().trim())
 
       /* Affiliation index */
-      cur_affiliation_indexes = [];
+      cur_affiliation_indexes = []
       $(this).find('.affiliation').each(function () {
-        cur_affiliation_indexes.push(list_of_affiliations.indexOf($(this).text().trim()) + 1);
-      });
-      author_affiliation_index.push(cur_affiliation_indexes);
+        cur_affiliation_indexes.push(list_of_affiliations.indexOf($(this).text().trim()) + 1)
+      })
+      author_affiliation_index.push(cur_affiliation_indexes)
 
       /* Email */
-      author_email.push($(this).find('.email a').text().trim());
-    });
+      author_email.push($(this).find('.email a').text().trim())
+    })
 
     /* Add authors' names + affiliation number */
     for (var i = 0; i < author_names.length; i++) {
-      var cur_affiliation_index = '';
+      var cur_affiliation_index = ''
       if (list_of_affiliations.length > 1) {
-        cur_affiliation_index += '<sup>';
+        cur_affiliation_index += '<sup>'
         for (var j = 0; j < author_affiliation_index[i].length; j++) {
           if (j > 0) {
-            cur_affiliation_index += ', ';
+            cur_affiliation_index += ', '
           }
-          cur_affiliation_index += author_affiliation_index[i][j];
+          cur_affiliation_index += author_affiliation_index[i][j]
         }
-        cur_affiliation_index += '</sup>';
+        cur_affiliation_index += '</sup>'
       }
-      authors.append($('<strong class="author_name">' + author_names[i] + cur_affiliation_index + "</strong>"));
+      authors.append($('<strong class="author_name">' + author_names[i] + cur_affiliation_index + "</strong>"))
     }
 
     /* Affiliation */
-    authors.append('<br /><br />');
-    var affiliations = $('<span class="affiliation"></span>');
+    authors.append('<br /><br />')
+    var affiliations = $('<span class="affiliation"></span>')
     for (var i = 0; i < list_of_affiliations.length; i++) {
       if (i > 0) {
-        affiliations.append('<br />');
+        affiliations.append('<br />')
       }
       if (list_of_affiliations.length > 1) {
-        affiliations.append(`<sup>${(i + 1)}</sup> `);
+        affiliations.append(`<sup>${(i + 1)}</sup> `)
       }
-      affiliations.append(list_of_affiliations[i]);
+      affiliations.append(list_of_affiliations[i])
     }
-    affiliations.appendTo(authors);
+    affiliations.appendTo(authors)
 
     /* Emails */
-    authors.append('<br />');
-    var emails = $('<code class="email"></code>');
+    authors.append('<br />')
+    var emails = $('<code class="email"></code>')
     for (var i = 0; i < author_email.length; i++) {
       if (i > 0) {
-        emails.append(', ');
+        emails.append(', ')
       }
-      emails.append(author_email[i]);
+      emails.append(author_email[i])
     }
-    emails.appendTo(authors);
+    emails.appendTo(authors)
 
     /* Remove the all authors' metadata and add the new one */
-    $('header address').remove();
-    authors.appendTo($('header'));
+    $('header address').remove()
+    authors.appendTo($('header'))
 
     /* Keywords */
-    $('header p.keywords').appendTo('section[role=doc-abstract]');
+    $('header p.keywords').appendTo('section[role=doc-abstract]')
     /* /END Authors */
   },
   /* It reorder the captions */
   orderCaptions: function (captionFirst, listOfElements) {
     listOfElements = typeof listOfElements !== 'undefined' ?
-      listOfElements : $(`${figurebox_selector},${tablebox_selector},${listingbox_selector}`);
+      listOfElements : $(`${figurebox_selector},${tablebox_selector},${listingbox_selector}`)
     listOfElements.each(function () {
-      var parent_figure = $(this).parents('figure');
+      var parent_figure = $(this).parents('figure')
       if (captionFirst) {
-        parent_figure.find('figcaption').prependTo(parent_figure);
+        parent_figure.find('figcaption').prependTo(parent_figure)
       } else {
-        parent_figure.find('figcaption').appendTo(parent_figure);
+        parent_figure.find('figcaption').appendTo(parent_figure)
       }
-    });
+    })
   }
-});
+})
 
-const figurebox_selector_img = 'p > img:not([role=math])';
-const figurebox_selector_svg = 'p > svg';
-const figurebox_selector = `figure > ${figurebox_selector_img}, figure > ${figurebox_selector_svg}`;
-const tablebox_selector_table = 'table';
-const tablebox_selector = `figure > ${tablebox_selector_table}`;
-const formulabox_selector_img = 'p > img[role=math]';
-const formulabox_selector_span = 'p > span[role=math]';
-const formulabox_selector_math = 'p > math';
-const formulabox_selector = `figure > ${formulabox_selector_img}, figure > ${formulabox_selector_span}, figure > ${formulabox_selector_math}`;
-const listingbox_selector_pre = 'pre';
-const listingbox_selector = `figure > ${listingbox_selector_pre}`;
+const figurebox_selector_img = 'p > img:not([role=math])'
+const figurebox_selector_svg = 'p > svg'
+const figurebox_selector = `figure > ${figurebox_selector_img}, figure > ${figurebox_selector_svg}`
+const tablebox_selector_table = 'table'
+const tablebox_selector = `figure > ${tablebox_selector_table}`
+const formulabox_selector_img = 'p > img[role=math]'
+const formulabox_selector_span = 'p > span[role=math]'
+const formulabox_selector_math = 'p > math'
+const formulabox_selector = `figure > ${formulabox_selector_img}, figure > ${formulabox_selector_span}, figure > ${formulabox_selector_math}`
+const listingbox_selector_pre = 'pre'
+const listingbox_selector = `figure > ${listingbox_selector_pre}`
+const annotation_selector = 'script[type="application/json+ld"]'
 
 /**
  * Create the rash modularized
@@ -314,6 +315,7 @@ const rash = {
     rash.footer()
     rash.initMathJax()
     rash.initCSS()
+    rash.renderAnnotations()
 
   },
 
@@ -412,7 +414,7 @@ const rash = {
       var cur_caption = $(this).parents('figure').find('figcaption')
       var cur_number = $(this).findNumber(tablebox_selector)
 
-      cur_caption.html(`<strong class="cgen" data-rash-original-content="">Figure ${cur_number}. </strong>${cur_caption.html()}`)
+      cur_caption.html(`<strong class="cgen" data-rash-original-content="">Table ${cur_number}. </strong>${cur_caption.html()}`)
     })
 
     $(formulabox_selector).each(function () {
@@ -428,7 +430,7 @@ const rash = {
       var cur_caption = $(this).parents('figure').find('figcaption')
       var cur_number = $(this).findNumber(listingbox_selector)
 
-      cur_caption.html(`<strong class="cgen" data-rash-original-content="">Figure ${cur_number}. </strong>${cur_caption.html()}`)
+      cur_caption.html(`<strong class="cgen" data-rash-original-content="">Listing ${cur_number}. </strong>${cur_caption.html()}`)
     })
   },
 
@@ -673,7 +675,7 @@ const rash = {
           processClass: process_math_class,
           ignoreClass: ignore_math_class
         }
-      });
+      })
       // we changed the DOM, so we make MathJax typeset the document again.
       MathJax.Hub.Queue(['Typeset', MathJax.Hub])
     }
@@ -696,10 +698,22 @@ const rash = {
         currentStyle = '#rash_web_based_layout'
 
       $(this).changeCSS(currentStyle)
-    });
-  }
+    })
+  },
 
   /* /END General function for loading CSS */
+
+  /* Render semantic annotations */
+
+  renderAnnotations: () => {
+
+    $(annotation_selector).each(function () {
+
+      const annotation = JSON.parse($(this).html())
+    })
+  },
+
+  /* /END Render semantic annotations */
 }
 
 $(() => rash.run())
