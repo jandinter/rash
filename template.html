@@ -28,9 +28,13 @@ Under the following terms:
 
   <script src="js/jquery.min.js">
   </script>
+  <script src="js/jquery.xpath.min.js">
+  </script>
   <script src="js/bootstrap.min.js">
   </script>
   <script src="js/rash.js">
+  </script>
+  <script src="https://unpkg.com/tooltip.js@1.2.0/dist/umd/tooltip.min.js">
   </script>
 
   <!-- MathJax for multi-browser support of LaTeX formulas and MathML -->
@@ -71,21 +75,60 @@ Under the following terms:
 
   <script type="application/json+ld">
     {
+      "id": "annotation_01",
       "@context": "http://www.w3.org/ns/anno.jsonld",
       "created": "2018-05-29T14:40:00",
-      "bodyValue": "This is a single comment",
-      "creator": "https://orcid.org/0000-0002-3504-3241",
+      "bodyValue": "Change abstract in 'sommario'",
+      "creator": "Gianmarco Spinaci",
       "target": {
-        "selector": [{
+        "selector": {
           "startSelector": {
-            "@type": "CssSelector",
-            "@value": "#start_01"
+            "@type": "XPathSelector",
+            "@value": "//section[@role='doc-abstract']/h1[1]"
           },
           "endSelector": {
-            "@type": "CssSelector",
-            "@value": "#end_01"
+            "@type": "XPathSelector",
+            "@value": "//section[@role='doc-abstract']/h1[1]"
+          },
+          "start": {
+            "@type": "DataPositionSelector",
+            "@value": "0"
+          },
+          "end": {
+            "@type": "DataPositionSelector",
+            "@value": "8"
           }
-        }]
+        }
+      }
+    }
+  </script>
+
+  <script type="application/json+ld">
+    {
+      "id": "annotation_02",
+      "@context": "http://www.w3.org/ns/anno.jsonld",
+      "created": "2018-05-29T14:40:00",
+      "bodyValue": "I don't like the title",
+      "creator": "Gianmarco Spinaci",
+      "target": {
+        "selector": {
+          "startSelector": {
+            "@type": "XPathSelector",
+            "@value": "//h1[contains(@class, 'title')]"
+          },
+          "endSelector": {
+            "@type": "XPathSelector",
+            "@value": "//h1[contains(@class, 'title')]"
+          },
+          "start": {
+            "@type": "DataPositionSelector",
+            "@value": "0"
+          },
+          "end": {
+            "@type": "DataPositionSelector",
+            "@value": "5"
+          }
+        }
       }
     }
   </script>
@@ -94,6 +137,7 @@ Under the following terms:
 </head>
 
 <body>
+
   <!-- Abstract -->
   <section role="doc-abstract">
     <h1>Abstract</h1>

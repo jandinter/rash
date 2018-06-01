@@ -295,7 +295,10 @@ const formulabox_selector_math = 'p > math'
 const formulabox_selector = `figure > ${formulabox_selector_img}, figure > ${formulabox_selector_span}, figure > ${formulabox_selector_math}`
 const listingbox_selector_pre = 'pre'
 const listingbox_selector = `figure > ${listingbox_selector_pre}`
+const annotation_sidebar_selector = 'aside#annotations'
+
 const annotation_selector = 'script[type="application/json+ld"]'
+const json_value_key = '@value'
 
 /**
  * Create the rash modularized
@@ -315,9 +318,22 @@ const rash = {
     rash.footer()
     rash.initMathJax()
     rash.initCSS()
-    rash.renderAnnotations()
-
   },
+
+  /* Init annotation sidebar */
+
+  initAnnotationSidebar() {
+
+    let annotation_sidebar = $(`
+      <aside id="annotations" data-rash-original-content="" style="height:${$('html').outerHeight(true)}px"></aside>
+    `)
+
+    annotation_sidebar.prependTo($('body'))
+
+    rash._renderAnnotations()
+  },
+
+  /* /END Init annotation sidebar */
 
   /* Code Block */
 
@@ -705,15 +721,187 @@ const rash = {
 
   /* Render semantic annotations */
 
-  renderAnnotations: () => {
+  _renderAnnotations: () => {
 
     $(annotation_selector).each(function () {
 
-      const annotation = JSON.parse($(this).html())
+      let annotation = new Annotation(JSON.parse($(this).html()))
+
+      annotation.addMarker()
     })
   },
 
   /* /END Render semantic annotations */
 }
 
+/**
+ * 
+ */
+class Annotation {
+
+  /**
+   * 
+   * @param {*} semanticAnnotation 
+   */
+  constructor(semanticAnnotation) {
+
+    this.semanticAnnotation = semanticAnnotation
+
+    // Create and save the selectors
+    this.startSelector = {
+      selector: semanticAnnotation.target.selector.startSelector[json_value_key],
+      offset: semanticAnnotation.target.selector.start[json_value_key],
+      role: 'start'
+    }
+
+    this.endSelector = {
+      selector: semanticAnnotation.target.selector.endSelector[json_value_key],
+      offset: semanticAnnotation.target.selector.end[json_value_key],
+      role: 'end'
+    }
+  }
+
+  /**
+   * 
+   */
+  getTemplate(role) {
+    return `<span data-rash-original-content="" data-rash-annotation-role="${role}" data-rash-annotation-id="${this.semanticAnnotation.id}"/>`
+  }
+
+  /**
+   * 
+   */
+  addMarker() {
+
+    // Save the elements
+    this.startElement = $(document).xpath(this.startSelector.selector)
+    this.endElement = $(document).xpath(this.endSelector.selector)
+
+    // Create the two markers
+    this._createMarker(this.startElement, this.startSelector)
+    this._createMarker(this.endElement, this.endSelector)
+
+    // Wrap the text between the two markers
+    this._wrapInBetweenText()
+  }
+
+  /**
+   * 
+   * This function create and add the marker to the html based on the element (given by the XPATH from the annotation)
+   * and the selector which contains both the XPATH selector and the offset
+   * 
+   * @param JQueryObject element 
+   * @param JSON selector 
+   */
+  _createMarker(element, selector) {
+
+    /**
+     * 
+     * Given the source text split the source and add the html tag based on the selector 
+     * 
+     * @param String source 
+     * @param JSON selector 
+     */
+    const _updateText = (source, selector) =>
+      `${source.substring(0, selector.offset)}${this.getTemplate(selector.role)}${source.substring(selector.offset)}`
+
+    /**
+     * 
+     * Get the text of the single NodeElement. If the NodeElement should containt the marker tag, add it in the html
+     * 
+     * @param NodeElement node 
+     * @param JSON selector 
+     */
+    const _getText = (node, selector) => {
+
+      offset += node.length
+      let text
+
+      // Check if the marker has to be added here
+      if (selector.offset >= lastOffset && selector.offset <= offset)
+        text = _updateText(node.nodeValue, selector)
+
+      else
+        text = node.nodeValue
+
+      lastOffset += node.length
+
+      return text
+    }
+
+    // Set variables that are used to iterate over the nodes
+    let lastOffset = 0
+    let offset = 0
+    let html = ''
+
+    // Iterate over all the nodes contained in the element
+    element.contents().each(function () {
+
+      let node = $(this)[0]
+
+      // Manipulate the html element
+      if (node.nodeType !== 3) {
+
+        // If it has no text
+        if (!$(node).text().length)
+          html += node.outerHTML
+
+        // Change the reference to the textual node
+        //else if ($(node).contents().length > 1)
+        // TODO change! This method doesn't work
+        //html += _manipulateNodes($(node))
+
+        else if ($(node).contents().length === 1) {
+          $(node).html(_getText($(node).contents()[0], selector))
+          html += $(node)[0].outerHTML
+        }
+
+      } else
+        html += _getText(node, selector)
+
+      element.html(html)
+    })
+  }
+
+  /**
+   * 
+   * Wrap the text between the two markers inside a span with tooltip
+   * 
+   */
+  _wrapInBetweenText() {
+
+    // Save the css selectors
+    this.startSelector.css = `span[data-rash-annotation-id="${this.semanticAnnotation.id}"][data-rash-annotation-role="start"]`
+    this.endSelector.css = `span[data-rash-annotation-id="${this.semanticAnnotation.id}"][data-rash-annotation-role="end"]`
+
+    // Save the markers
+    let startMarker = $(this.startSelector.css)[0]
+    let endMarker = $(this.endSelector.css)[0]
+
+    // Create the range and the wrapper
+    let range = new Range()
+
+    // Set the range and surround it
+    range.setStartAfter(startMarker)
+    range.setEndBefore(endMarker)
+
+    let wrapper = $(`<span data-rash-annotation-id="${this.semanticAnnotation.id}" data-rash-original-content="" class="annotation_hilight"></span>`)
+
+    range.surroundContents(wrapper[0])
+
+    this._createSideAnnotation($(startMarker).offset().top)
+  }
+
+  /**
+   * 
+   */
+  _createSideAnnotation(top) {
+    //$(annotation_sidebar_selector).append(`<span style="top:${top}px" class="side_note" data-rash-annotation-id="${this.semanticAnnotation.id}">1</span>`)
+  }
+}
+
 $(() => rash.run())
+
+$(window).load(function () {
+ rash.initAnnotationSidebar()
+})
