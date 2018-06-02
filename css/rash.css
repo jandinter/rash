@@ -171,25 +171,26 @@ section:not([role=doc-abstract]):not([role=doc-bibliography]):not([role=doc-ackn
 /* Annotation */
 
 aside#annotations {
+  position: absolute;
   width: 30px;
   top: 0;
   left: 0;
   background-color: #ececec;
-  position: absolute
 }
 
-aside#annotations > span.side_note{
-  position: absolute;
-  background-color: white;
-  left: 0px;
-  width: 35px;
-  padding-left: 25px;
-  border: 1px solid grey
+aside#annotations.active {
+  width: 230px;
 }
-		
+
+aside#annotations>span.side_note {
+  position: absolute;
+  left: 1px;
+  width: 0;
+  height: 0;
+}
 
 .annotation_hilight {
-  background-color: rgba(255, 255, 60, 0.3)
+  background-color: rgba(255, 255, 60, 0.3);
 }
 
 /* /END Annotation */

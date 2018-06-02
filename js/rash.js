@@ -325,11 +325,15 @@ const rash = {
   initAnnotationSidebar() {
 
     let annotation_sidebar = $(`
-      <aside id="annotations" data-rash-original-content="" style="height:${$('html').outerHeight(true)}px"></aside>
+      <aside id="annotations" data-rash-original-content="" style="height:${$('html').outerHeight(true)}px">
+      </aside>
     `)
 
-    annotation_sidebar.prependTo($('body'))
+    annotation_sidebar.on('click', function () {
+      $(this).toggleClass('active')
+    })
 
+    annotation_sidebar.prependTo($('body'))
     rash._renderAnnotations()
   },
 
@@ -903,5 +907,5 @@ class Annotation {
 $(() => rash.run())
 
 $(window).load(function () {
- rash.initAnnotationSidebar()
+  rash.initAnnotationSidebar()
 })
