@@ -768,7 +768,7 @@ class Annotation {
   /**
    * 
    */
-  getTemplate(role) {
+  _getMarker(role) {
     return `<span data-rash-original-content="" data-rash-annotation-role="${role}" data-rash-annotation-id="${this.semanticAnnotation.id}"/>`
   }
 
@@ -781,95 +781,86 @@ class Annotation {
     this.startElement = $(document).xpath(this.startSelector.selector)
     this.endElement = $(document).xpath(this.endSelector.selector)
 
-    // Create the two markers
     this._createMarker(this.startElement, this.startSelector)
     this._createMarker(this.endElement, this.endSelector)
 
-    // Wrap the text between the two markers
     this._wrapInBetweenText()
   }
 
   /**
    * 
-   * This function create and add the marker to the html based on the element (given by the XPATH from the annotation)
+   * This function creates and add the marker to the html based on the element (given by the XPATH from the annotation)
    * and the selector which contains both the XPATH selector and the offset
    * 
    * @param JQueryObject element 
-   * @param JSON selector 
+   * @param JSONObject selector 
    */
   _createMarker(element, selector) {
 
     /**
      * 
-     * Given the source text split the source and add the html tag based on the selector 
+     * This function creates a range starting in the node at the selected offset, and add the marker with the role
      * 
-     * @param String source 
-     * @param JSON selector 
+     * @param textualNode node 
+     * @param JSONObject selector 
+     * @param Integer offset 
      */
-    const _updateText = (source, selector) =>
-      `${source.substring(0, selector.offset)}${this.getTemplate(selector.role)}${source.substring(selector.offset)}`
+    const _createRangeMarker = (node, selector, offset) => {
+
+      // Create the range and set its start
+      const range = new Range()
+      range.setStart(node, offset)
+
+      // Insert a node where the range starts
+      range.insertNode($(this._getMarker(selector.role))[0])
+    }
 
     /**
      * 
-     * Get the text of the single NodeElement. If the NodeElement should containt the marker tag, add it in the html
+     * Analyze all the nodes contained inside @param element, keeping all the offsets
      * 
-     * @param NodeElement node 
-     * @param JSON selector 
+     * @param JQqueryObject element 
      */
-    const _getText = (node, selector) => {
+    const _analyzeContent = element => {
 
-      offset += node.length
-      let text
+      // Iterate over all the nodes contained in the element
+      element.contents().each(function () {
 
-      // Check if the marker has to be added here
-      if (selector.offset >= lastOffset && selector.offset <= offset)
-        text = _updateText(node.nodeValue, selector)
+        // Get the element in vanilla js
+        let node = $(this)[0]
 
-      else
-        text = node.nodeValue
+        // If the node is a html element, recursively go deep and analyze its nodes
+        if (node.nodeType !== 3)
+          return _analyzeContent($(node))
 
-      lastOffset += node.length
+        // If the node is a textualNode, do the normal behaviour
+        else {
 
-      return text
+          // Store the ending offset of the 
+          maxOffset += node.length
+
+          // Add the marker if it has to be added inside the current node
+          if (selector.offset >= minOffset && selector.offset <= maxOffset)
+            _createRangeMarker(node, selector, selector.offset - minOffset)
+
+          // Update the leftOffset
+          minOffset = maxOffset
+        }
+      })
     }
 
     // Set variables that are used to iterate over the nodes
-    let lastOffset = 0
-    let offset = 0
-    let html = ''
+    let minOffset = 0
+    let maxOffset = 0
 
-    // Iterate over all the nodes contained in the element
-    element.contents().each(function () {
-
-      let node = $(this)[0]
-
-      // Manipulate the html element
-      if (node.nodeType !== 3) {
-
-        // If it has no text
-        if (!$(node).text().length)
-          html += node.outerHTML
-
-        // Change the reference to the textual node
-        //else if ($(node).contents().length > 1)
-        // TODO change! This method doesn't work
-        //html += _manipulateNodes($(node))
-
-        else if ($(node).contents().length === 1) {
-          $(node).html(_getText($(node).contents()[0], selector))
-          html += $(node)[0].outerHTML
-        }
-
-      } else
-        html += _getText(node, selector)
-
-      element.html(html)
-    })
+    _analyzeContent(element)
   }
 
   /**
    * 
-   * Wrap the text between the two markers inside a span with tooltip
+   * Wrap the text between the two markers inside a span
+   * 
+   * N.B. this function doesn't work when the markers intersect non-textual nodes
    * 
    */
   _wrapInBetweenText() {
@@ -889,7 +880,7 @@ class Annotation {
     range.setStartAfter(startMarker)
     range.setEndBefore(endMarker)
 
-    let wrapper = $(`<span data-rash-annotation-id="${this.semanticAnnotation.id}" data-rash-original-content="" class="annotation_hilight"></span>`)
+    let wrapper = $(`<span title="${this.semanticAnnotation.bodyValue}" data-rash-annotation-id="${this.semanticAnnotation.id}" data-rash-original-content="" class="annotation_hilight"></span>`)
 
     range.surroundContents(wrapper[0])
 

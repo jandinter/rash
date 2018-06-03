@@ -84,19 +84,19 @@ Under the following terms:
         "selector": {
           "startSelector": {
             "@type": "XPathSelector",
-            "@value": "//section[@role='doc-abstract']/h1[1]"
+            "@value": "//section[@role='doc-abstract']/p[1]"
           },
           "endSelector": {
             "@type": "XPathSelector",
-            "@value": "//section[@role='doc-abstract']/h1[1]"
+            "@value": "//section[@role='doc-abstract']/p[1]"
           },
           "start": {
             "@type": "DataPositionSelector",
-            "@value": "0"
+            "@value": "3"
           },
           "end": {
             "@type": "DataPositionSelector",
-            "@value": "8"
+            "@value": "14"
           }
         }
       }
@@ -132,7 +132,7 @@ Under the following terms:
       }
     }
   </script>
-
+  
   <!-- /END Semantic annotations -->
 </head>
 
@@ -141,7 +141,7 @@ Under the following terms:
   <!-- Abstract -->
   <section role="doc-abstract">
     <h1>Abstract</h1>
-    <p>The text of the abstract.</p>
+    <p>The text <b>of</b> the.</p>
     <p>Even if multiple paragraphs.</p>
   </section>
 
