@@ -178,15 +178,30 @@ aside#annotations {
   background-color: #ececec;
 }
 
+aside#annotations header {
+  position: fixed;
+  z-index: 1;
+}
+
+aside#annotations a {
+  display: block;
+  margin: 5px;
+}
+
 aside#annotations.active {
   width: 230px;
 }
 
-aside#annotations>span.side_note {
+aside#annotations.active header>a {
+  margin-left: 205px;
+}
+
+aside#annotations>a.side_note {
   position: absolute;
-  left: 1px;
-  width: 0;
-  height: 0;
+}
+
+aside#annotations>a.side_note.hidden{
+  display: none;
 }
 
 .annotation_hilight {
@@ -204,7 +219,7 @@ html {
 
 body {
   /* Margin bottom by footer height */
-  margin-bottom: 60px;
+  margin-bottom: 100px;
 }
 
 .footer {

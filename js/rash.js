@@ -295,9 +295,12 @@ const formulabox_selector_math = 'p > math'
 const formulabox_selector = `figure > ${formulabox_selector_img}, figure > ${formulabox_selector_span}, figure > ${formulabox_selector_math}`
 const listingbox_selector_pre = 'pre'
 const listingbox_selector = `figure > ${listingbox_selector_pre}`
-const annotation_sidebar_selector = 'aside#annotations'
 
-const annotation_selector = 'script[type="application/json+ld"]'
+const annotation_sidebar_selector = 'aside#annotations'
+const side_annotation_selector = `${annotation_sidebar_selector}>a.side_note`
+
+const html_annotations_selector = 'span[data-rash-annotation-type=wrap]'
+const semantic_annotation_selector = 'script[type="application/json+ld"]'
 const json_value_key = '@value'
 
 /**
@@ -326,15 +329,24 @@ const rash = {
 
     let annotation_sidebar = $(`
       <aside id="annotations" data-rash-original-content="" style="height:${$('html').outerHeight(true)}px">
+        <header>
+          <!--
+          <a id="toggleSidebar" title="show/hide annotation sidebar" class="btn btn-default">
+            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+          </a>
+          -->
+          <a id="toggleAnnotations" title="show/hide annotations" class="btn btn-default active">
+            <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+          </a>
+        </header>
       </aside>
     `)
 
-    annotation_sidebar.on('click', function () {
-      $(this).toggleClass('active')
-    })
-
     annotation_sidebar.prependTo($('body'))
-    rash._renderAnnotations()
+
+    $('a#toggleAnnotations').on('click', function () {
+      rash.toggleAnnotations($(this))
+    })
   },
 
   /* /END Init annotation sidebar */
@@ -725,9 +737,9 @@ const rash = {
 
   /* Render semantic annotations */
 
-  _renderAnnotations: () => {
+  renderAnnotations: () => {
 
-    $(annotation_selector).each(function () {
+    $(semantic_annotation_selector).each(function () {
 
       let annotation = new Annotation(JSON.parse($(this).html()))
 
@@ -736,6 +748,25 @@ const rash = {
   },
 
   /* /END Render semantic annotations */
+
+  /* Toggle annotations */
+
+  toggleAnnotations: (element) => {
+
+    element.toggleClass('active')
+
+    $(html_annotations_selector).each(function () {
+
+      $(this).toggleClass('annotation_hilight')
+    })
+
+    $(side_annotation_selector).each(function () {
+
+      $(this).toggleClass('hidden')
+    })
+  }
+
+  /* /END Toggle annotations */
 }
 
 /**
@@ -865,13 +896,9 @@ class Annotation {
    */
   _wrapInBetweenText() {
 
-    // Save the css selectors
-    this.startSelector.css = `span[data-rash-annotation-id="${this.semanticAnnotation.id}"][data-rash-annotation-role="start"]`
-    this.endSelector.css = `span[data-rash-annotation-id="${this.semanticAnnotation.id}"][data-rash-annotation-role="end"]`
-
     // Save the markers
-    let startMarker = $(this.startSelector.css)[0]
-    let endMarker = $(this.endSelector.css)[0]
+    let startMarker = $(`span[data-rash-annotation-id="${this.semanticAnnotation.id}"][data-rash-annotation-role="start"]`)[0]
+    let endMarker = $(`span[data-rash-annotation-id="${this.semanticAnnotation.id}"][data-rash-annotation-role="end"]`)[0]
 
     // Create the range and the wrapper
     let range = new Range()
@@ -880,10 +907,11 @@ class Annotation {
     range.setStartAfter(startMarker)
     range.setEndBefore(endMarker)
 
-    let wrapper = $(`<span title="${this.semanticAnnotation.bodyValue}" data-rash-annotation-id="${this.semanticAnnotation.id}" data-rash-original-content="" class="annotation_hilight"></span>`)
+    // Create the wrapper element tha will wrap the text between the two markers
+    this.wrapper = $(`<span data-rash-annotation-type="wrap" title="#${this.semanticAnnotation.id}" data-rash-annotation-id="${this.semanticAnnotation.id}" data-rash-original-content="" class="annotation_hilight"></span>`)
+    range.surroundContents(this.wrapper[0])
 
-    range.surroundContents(wrapper[0])
-
+    // Create the side annotation passing the distance of the height
     this._createSideAnnotation($(startMarker).offset().top)
   }
 
@@ -891,7 +919,10 @@ class Annotation {
    * 
    */
   _createSideAnnotation(top) {
-    //$(annotation_sidebar_selector).append(`<span style="top:${top}px" class="side_note" data-rash-annotation-id="${this.semanticAnnotation.id}">1</span>`)
+    $(annotation_sidebar_selector).append(`
+      <a style="top:${top-5}px" title="#${this.semanticAnnotation.id}" data-rash-annotation-id="${this.semanticAnnotation.id}" class="btn btn-default side_note">
+        <b>1</b>
+      </a>`)
   }
 }
 
@@ -899,4 +930,5 @@ $(() => rash.run())
 
 $(window).load(function () {
   rash.initAnnotationSidebar()
+  rash.renderAnnotations()
 })
