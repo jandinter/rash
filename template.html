@@ -84,11 +84,11 @@ Under the following terms:
         "selector": {
           "startSelector": {
             "@type": "XPathSelector",
-            "@value": "//section[@role='doc-abstract']/p[1]"
+            "@value": "//section[@role='doc-abstract']/p[2]"
           },
           "endSelector": {
             "@type": "XPathSelector",
-            "@value": "//section[@role='doc-abstract']/p[1]"
+            "@value": "//section[@role='doc-abstract']/p[2]"
           },
           "start": {
             "@type": "DataPositionSelector",
@@ -96,37 +96,37 @@ Under the following terms:
           },
           "end": {
             "@type": "DataPositionSelector",
-            "@value": "25"
+            "@value": "28"
           }
         }
       }
     }
   </script>
-
+  
   <script type="application/json+ld">
     {
-      "id": "annotation_02",
+      "id": "annotation_01",
       "@context": "http://www.w3.org/ns/anno.jsonld",
       "created": "2018-05-29T14:40:00",
-      "bodyValue": "I don't like the title",
+      "bodyValue": "Change the paragraph with another thing",
       "creator": "Gianmarco Spinaci",
       "target": {
         "selector": {
           "startSelector": {
             "@type": "XPathSelector",
-            "@value": "//h1[contains(@class, 'title')]"
+            "@value": "//section[@role='doc-abstract']/p[1]"
           },
           "endSelector": {
             "@type": "XPathSelector",
-            "@value": "//h1[contains(@class, 'title')]"
+            "@value": "//section[@role='doc-abstract']/p[1]"
           },
           "start": {
             "@type": "DataPositionSelector",
-            "@value": "0"
+            "@value": "6"
           },
           "end": {
             "@type": "DataPositionSelector",
-            "@value": "5"
+            "@value": "20"
           }
         }
       }
@@ -141,7 +141,7 @@ Under the following terms:
   <!-- Abstract -->
   <section role="doc-abstract">
     <h1>Abstract</h1>
-    <p>The text of the Abstract.</p>
+    <p>The <em>text <strong>of</strong> the </em><code>Ab</code>stract.</p>
     <p>Even if multiple paragraphs.</p>
   </section>
 

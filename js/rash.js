@@ -782,7 +782,7 @@ class Annotation {
 
     this.semanticAnnotation = semanticAnnotation
 
-    // Create and save the selectors
+    // Create the starting selector
     this.startSelector = {
       selector: semanticAnnotation.target.selector.startSelector[json_value_key],
       offset: semanticAnnotation.target.selector.start[json_value_key],
@@ -812,10 +812,23 @@ class Annotation {
     this.startElement = $(document).xpath(this.startSelector.selector)
     this.endElement = $(document).xpath(this.endSelector.selector)
 
+    // Check if the annotation wraps entirely a html element
+    if (this.startElement.is(this.endElement) && (this.startSelector.offset == 0 && this.endElement.text().length == this.endSelector.offset))
+      return this._wrapElement(this.startElement)
+
     this._createMarker(this.startElement, this.startSelector)
     this._createMarker(this.endElement, this.endSelector)
 
-    this._wrapInBetweenText()
+    this._fragmentateAnnotation()
+  }
+
+  _wrapElement(element) {
+
+    element.addClass('annotation_element')
+    element.attr('title', this.semanticAnnotation.id)
+    element.attr('data-rash-annotation-id', this.semanticAnnotation.id)
+
+    this._createSideAnnotation(element)
   }
 
   /**
@@ -889,38 +902,54 @@ class Annotation {
 
   /**
    * 
-   * Wrap the text between the two markers inside a span
-   * 
-   * N.B. this function doesn't work when the markers intersect non-textual nodes
-   * 
+   * Wrap all the nodes between the two markers inside a span
    */
-  _wrapInBetweenText() {
+  _fragmentateAnnotation() {
 
     // Save the markers
     let startMarker = $(`span[data-rash-annotation-id="${this.semanticAnnotation.id}"][data-rash-annotation-role="start"]`)[0]
     let endMarker = $(`span[data-rash-annotation-id="${this.semanticAnnotation.id}"][data-rash-annotation-role="end"]`)[0]
 
-    // Create the range and the wrapper
-    let range = new Range()
+    // Save all the elements that must be wrapped
+    let elements = []
 
-    // Set the range and surround it
-    range.setStartAfter(startMarker)
-    range.setEndBefore(endMarker)
+    // Start from the next element of the starting marker and iterate until the endMarker is found
+    let next = startMarker.nextSibling
+    while (next != endMarker) {
 
-    // Create the wrapper element tha will wrap the text between the two markers
-    this.wrapper = $(`<span data-rash-annotation-type="wrap" title="#${this.semanticAnnotation.id}" data-rash-annotation-id="${this.semanticAnnotation.id}" data-rash-original-content="" class="annotation_hilight"></span>`)
-    range.surroundContents(this.wrapper[0])
+      // Add the element that must has to be wrapped, inside the array
+      elements.push(next)
+
+      // If the next sibling doesn't exist, go up and look at the next element of the parent
+      if (next.nextSibling == null)
+        next = next.parentElement.nextSibling
+
+      // Otherwise preceed normally
+      else
+        next = next.nextSibling
+    }
+
+    // Wrap all parts of annotations inside a span
+    elements.map((node, i) =>
+      $(node).replaceWith(`
+        <span data-rash-annotation-index="${++i}" data-rash-annotation-type="wrap" title="#${this.semanticAnnotation.id}" data-rash-annotation-id="${this.semanticAnnotation.id}" data-rash-original-content="" class="annotation_hilight">
+          ${node.nodeType === 3 ? node.nodeValue : node.outerHTML}
+        </span>`))
 
     // Create the side annotation passing the distance of the height
-    this._createSideAnnotation($(startMarker).offset().top)
+    this._createSideAnnotation(startMarker)
   }
 
   /**
    * 
    */
-  _createSideAnnotation(top) {
+  _createSideAnnotation(element) {
+
+    let top = $(element).offset().top
+    let height = $(element).height()
+
     $(annotation_sidebar_selector).append(`
-      <a style="top:${top-5}px" title="#${this.semanticAnnotation.id}" data-rash-annotation-id="${this.semanticAnnotation.id}" class="btn btn-default side_note">
+      <a style="top:${top - height / 2}px"" title="#${this.semanticAnnotation.id}" data-rash-annotation-id="${this.semanticAnnotation.id}" class="btn btn-default side_note">
         <b>1</b>
       </a>`)
   }

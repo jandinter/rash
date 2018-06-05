@@ -15,6 +15,7 @@ Under the following terms:
 */
 
 @namespace mathml url(http://www.w3.org/1998/Math/MathML);
+
 /* Font */
 
 body {
@@ -198,14 +199,22 @@ aside#annotations.active header>a {
 
 aside#annotations>a.side_note {
   position: absolute;
+  padding: 1px 5px!important;
 }
 
-aside#annotations>a.side_note.hidden{
+aside#annotations>a.side_note.hidden {
   display: none;
 }
 
 .annotation_hilight {
   background-color: rgba(255, 255, 60, 0.3);
+  padding-left: 0
+}
+
+.annotation_element {
+  border-left: 2px dotted black;
+  padding-left: 2px;
+  margin-left: -4px;
 }
 
 /* /END Annotation */
@@ -226,6 +235,7 @@ body {
   position: fixed;
   bottom: 0;
   width: 100%;
+
   /* Set the fixed height of the footer here */
   height: 60px;
   background-color: #f5f5f5;
@@ -328,48 +338,61 @@ section[role=doc-bibliography]>ul {
     size: A4;
     margin: 20mm 0mm 20mm 0mm;
   }
+
   html,
   body {
     width: 210mm;
     height: 297mm;
   }
+
   p {
     font-size: 10pt;
     text-align: justify;
   }
+
   pre {
     text-align: left;
   }
+
   figcaption,
   figure>p {
     text-align: center;
   }
+
   .title {
     font-size: 16pt !important;
   }
+
   h1 {
     font-size: 14pt !important;
   }
+
   h2 {
     font-size: 12pt !important;
   }
+
   h3 {
     font-size: 11pt !important;
   }
+
   h4,
   h5,
   h6 {
     font-size: 10pt !important;
   }
+
   pre {
     font-size: 8pt !important;
   }
+
   blockquote {
     font-size: 10pt !important;
   }
+
   address {
     font-size: 12pt !important;
   }
+
   table {
     max-width: 100%;
     font-size: 80%;
