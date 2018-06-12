@@ -330,13 +330,11 @@ const rash = {
     let annotation_sidebar = $(`
       <aside id="annotations" data-rash-original-content="" style="height:${$('html').outerHeight(true)}px">
         <header>
-          <!--
-          <a id="toggleSidebar" title="show/hide annotation sidebar" class="btn btn-default">
-            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-          </a>
-          -->
           <a id="toggleAnnotations" title="show/hide annotations" class="btn btn-default active">
             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+          </a>
+          <a id="toggleSidebar" title="show/hide annotation sidebar" class="btn btn-default">
+            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
           </a>
         </header>
       </aside>
@@ -346,6 +344,10 @@ const rash = {
 
     $('a#toggleAnnotations').on('click', function () {
       rash.toggleAnnotations($(this))
+    })
+
+    $('a#toggleSidebar').on('click', function () {
+      $(annotation_sidebar_selector).toggleClass('active')
     })
   },
 
@@ -800,7 +802,14 @@ class Annotation {
    * 
    */
   _getMarker(role) {
-    return `<span data-rash-original-content="" data-rash-annotation-role="${role}" data-rash-annotation-id="${this.semanticAnnotation.id}"/>`
+    return `<span class="cgen" data-rash-original-content="" data-rash-annotation-role="${role}" data-rash-annotation-id="${this.semanticAnnotation.id}"/>`
+  }
+
+  /**
+   * 
+   */
+  _getMarkerSelector(role) {
+    return `span[data-rash-annotation-id="${this.semanticAnnotation.id}"][data-rash-annotation-role="${role}"]`
   }
 
   /**
@@ -871,7 +880,7 @@ class Annotation {
       element.contents().each(function () {
 
         // Get the element in vanilla js
-        let node = $(this)[0]
+        let node = this
 
         // If the node is a html element, recursively go deep and analyze its nodes
         if (node.nodeType !== 3)
@@ -906,38 +915,71 @@ class Annotation {
    */
   _fragmentateAnnotation() {
 
+    /**
+     * 
+     * @param {*} node 
+     */
+    const includesEndingMarker = node => {
+
+      if (node.nodeType == 1) {
+        if (!Array.from(node.children).includes(endMarker))
+          return Array.from(node.children).map(includesEndingMarker)
+
+        else
+          return true
+      }
+    }
+
     // Save the markers
-    let startMarker = $(`span[data-rash-annotation-id="${this.semanticAnnotation.id}"][data-rash-annotation-role="start"]`)[0]
-    let endMarker = $(`span[data-rash-annotation-id="${this.semanticAnnotation.id}"][data-rash-annotation-role="end"]`)[0]
+    let startMarker = $(this._getMarkerSelector(this.startSelector.role))[0]
+    let endMarker = $(this._getMarkerSelector(this.endSelector.role))[0]
 
     // Save all the elements that must be wrapped
     let elements = []
 
     // Start from the next element of the starting marker and iterate until the endMarker is found
     let next = startMarker.nextSibling
-    while (next != endMarker) {
+    while (next != null && next != endMarker) {
 
-      // Add the element that must has to be wrapped, inside the array
-      elements.push(next)
+      // If the element is a node, that containt the marker at any level
+      if (next.nodeType != 3 && includesEndingMarker(next))
+        next = next.firstChild
 
-      // If the next sibling doesn't exist, go up and look at the next element of the parent
-      if (next.nextSibling == null)
-        next = next.parentElement.nextSibling
+      else {
 
-      // Otherwise preceed normally
-      else
-        next = next.nextSibling
+        // Add the element that must has to be wrapped, inside the array
+        //if (next.indexOf('\r\n|\r|\n'))
+        elements.push(next)
+
+        // If the next sibling doesn't exist, go up and look at the next element of the parent
+        if (next.nextSibling == null)
+          next = next.parentElement.nextSibling
+
+        // Otherwise preceed normally
+        else
+          next = next.nextSibling
+      }
     }
 
+
     // Wrap all parts of annotations inside a span
-    elements.map((node, i) =>
-      $(node).replaceWith(`
-        <span data-rash-annotation-index="${++i}" data-rash-annotation-type="wrap" title="#${this.semanticAnnotation.id}" data-rash-annotation-id="${this.semanticAnnotation.id}" data-rash-original-content="" class="annotation_hilight">
-          ${node.nodeType === 3 ? node.nodeValue : node.outerHTML}
-        </span>`))
+    elements.map((node, i) => {
+
+      if (typeof node == 'undefined')
+        return
+
+      let text = node.nodeType === 3 ? node.nodeValue : node.outerHTML
+
+      // TODO add the rash-original-content tag
+      $(node).replaceWith(`<span data-rash-annotation-index="${++i}" data-rash-annotation-type="wrap" title="#${this.semanticAnnotation.id}" data-rash-annotation-id="${this.semanticAnnotation.id}" class="cgen annotation_hilight">${text}</span>`)
+    })
 
     // Create the side annotation passing the distance of the height
     this._createSideAnnotation(startMarker)
+
+    // Remove the starting and ending markers
+    $(startMarker).remove()
+    $(endMarker).remove()
   }
 
   /**
@@ -945,13 +987,47 @@ class Annotation {
    */
   _createSideAnnotation(element) {
 
-    let top = $(element).offset().top
-    let height = $(element).height()
+    const top = $(element).offset().top
+    const height = $(element).height()
 
-    $(annotation_sidebar_selector).append(`
-      <a style="top:${top - height / 2}px"" title="#${this.semanticAnnotation.id}" data-rash-annotation-id="${this.semanticAnnotation.id}" class="btn btn-default side_note">
-        <b>1</b>
+    // TODO change the number of annotations per row programmatically
+    const annotationPerRow = 1
+    const annotationSelector = `span[data-rash-annotation-type="wrap"][data-rash-annotation-id="${this.semanticAnnotation.id}"]`
+
+    const sideAnnotation = $(`
+      <a style="top:${top}px" title="#${this.semanticAnnotation.id}" data-rash-annotation-id="${this.semanticAnnotation.id}" class="btn btn-default cgen side_note">
+        <b>${annotationPerRow}</b>
       </a>`)
+
+    const sideAnnotationBody = $(`
+      <div style="top:${top}px" class="side_note_body" data-rash-annotation-id="${this.semanticAnnotation.id}">
+        <blockquote>
+          ${this.semanticAnnotation.bodyValue}
+          <div class="side_note_footer">
+            <a href="#">@${this.semanticAnnotation.creator}</a>
+            <div class="side_note_date">${new Date(this.semanticAnnotation.created).toUTCString()}</div>
+          </div>
+        </blockquote>
+      </div>`)
+
+    sideAnnotation.on('mouseenter mouseleave', function () {
+      $(annotationSelector).each(function () {
+        $(this).toggleClass('selected')
+      })
+    })
+
+    sideAnnotationBody.on('mouseenter mouseleave', function () {
+      $(annotationSelector).each(function () {
+        $(this).toggleClass('selected')
+      })
+    })
+
+    sideAnnotation.on('click', function () {
+      $(annotation_sidebar_selector).toggleClass('active')
+    })
+
+    $(annotation_sidebar_selector).append(sideAnnotation)
+    $(annotation_sidebar_selector).append(sideAnnotationBody)
   }
 }
 

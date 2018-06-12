@@ -80,15 +80,16 @@ Under the following terms:
       "created": "2018-05-29T14:40:00",
       "bodyValue": "Change the paragraph with another thing",
       "creator": "Gianmarco Spinaci",
+      "Motivation": "commenting",
       "target": {
         "selector": {
           "startSelector": {
             "@type": "XPathSelector",
-            "@value": "//section[@role='doc-abstract']/p[2]"
+            "@value": "//section[@role='doc-abstract']/p[1]"
           },
           "endSelector": {
             "@type": "XPathSelector",
-            "@value": "//section[@role='doc-abstract']/p[2]"
+            "@value": "//section[@role='doc-abstract']/p[1]"
           },
           "start": {
             "@type": "DataPositionSelector",
@@ -96,16 +97,17 @@ Under the following terms:
           },
           "end": {
             "@type": "DataPositionSelector",
-            "@value": "28"
+            "@value": "7"
           }
         }
       }
     }
   </script>
   
+  <!--
   <script type="application/json+ld">
     {
-      "id": "annotation_01",
+      "id": "annotation_02",
       "@context": "http://www.w3.org/ns/anno.jsonld",
       "created": "2018-05-29T14:40:00",
       "bodyValue": "Change the paragraph with another thing",
@@ -118,20 +120,21 @@ Under the following terms:
           },
           "endSelector": {
             "@type": "XPathSelector",
-            "@value": "//section[@role='doc-abstract']/p[1]"
+            "@value": "//section[@role='doc-abstract']/p[2]"
           },
           "start": {
             "@type": "DataPositionSelector",
-            "@value": "6"
+            "@value": "12"
           },
           "end": {
             "@type": "DataPositionSelector",
-            "@value": "20"
+            "@value": "8"
           }
         }
       }
     }
   </script>
+  -->
   
   <!-- /END Semantic annotations -->
 </head>
@@ -141,7 +144,8 @@ Under the following terms:
   <!-- Abstract -->
   <section role="doc-abstract">
     <h1>Abstract</h1>
-    <p>The <em>text <strong>of</strong> the </em><code>Ab</code>stract.</p>
+    <!--<p>The <em>text <strong>of</strong></em></p>-->
+    <p>The text of the abstract.</p>
     <p>Even if multiple paragraphs.</p>
   </section>
 
