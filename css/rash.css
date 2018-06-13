@@ -172,9 +172,9 @@ section:not([role=doc-abstract]):not([role=doc-bibliography]):not([role=doc-ackn
 
 aside#annotations {
   position: absolute;
-  width: 30px;
+  width: 40px;
   top: 0;
-  left: 0;
+  right: 0;
   background-color: #ececec;
 }
 
@@ -189,30 +189,15 @@ aside#annotations header>a#toggleSidebar {
 
 aside#annotations a.btn {
   display: block;
-  margin: 5px;
+  margin: 5px -10px;
 }
 
 aside#annotations>div.side_note_body {
   display: none;
 }
 
-aside#annotations>div.side_note_body>blockquote {
-  font-size: 14px;
-  margin-bottom: 0px;
-}
-
-aside#annotations>div.side_note_body>blockquote>div.side_note_footer {
-  margin-top: 10px;
-}
-
-aside#annotations>div.side_note_body>blockquote>div.side_note_footer>div.side_note_date {
-  font-size: 12px;
-  color: #999;
-}
-
 aside#annotations>a.side_note {
   position: absolute;
-  padding: 1px 5px !important;
   z-index: 1;
 }
 
@@ -225,10 +210,10 @@ aside#annotations.active {
 }
 
 aside#annotations.active header>a {
-  margin-left: 205px;
+  margin-right: 205px;
 }
 
-aside#annotations.active a.side_note{
+aside#annotations.active a.side_note {
   display: none;
 }
 
@@ -240,10 +225,24 @@ aside#annotations.active>div.side_note_body {
   display: inline-block;
   position: absolute;
   background-color: white;
-  padding: 10px;
-  margin: 10px;
-  border-radius: 4px;
+  padding: 15px 10px;
+  width: 95%;
+  margin: 0 5px;
   border: 1px solid #ccc;
+}
+
+aside#annotations.active>div.side_note_body p{
+  margin-top: 10px;
+  font-size: 12px;
+  margin-bottom: 0!important
+}
+
+aside#annotations.active>div.side_note_body .media-list{
+  margin-bottom: 0;
+}
+
+aside#annotations.active>div.side_note_body .side_node_date{
+  color: #999999;
 }
 
 .annotation_hilight {

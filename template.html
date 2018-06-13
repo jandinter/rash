@@ -73,23 +73,23 @@ Under the following terms:
 
   <!-- Semantic annotations (https://www.w3.org/TR/annotation-vocab/) -->
 
-  <script type="application/json+ld">
+  <script id="annotation_01" type="application/json+ld">
     {
       "id": "annotation_01",
       "@context": "http://www.w3.org/ns/anno.jsonld",
       "created": "2018-05-29T14:40:00",
-      "bodyValue": "Change the paragraph with another thing",
-      "creator": "Gianmarco Spinaci",
+      "bodyValue": "Remove this paragraph",
+      "creator": "spino9330",
       "Motivation": "commenting",
       "target": {
         "selector": {
           "startSelector": {
             "@type": "XPathSelector",
-            "@value": "//section[@role='doc-abstract']/p[1]"
+            "@value": "//section[1]/p[1]"
           },
           "endSelector": {
             "@type": "XPathSelector",
-            "@value": "//section[@role='doc-abstract']/p[1]"
+            "@value": "//section[2]/p[1]"
           },
           "start": {
             "@type": "DataPositionSelector",
@@ -97,45 +97,25 @@ Under the following terms:
           },
           "end": {
             "@type": "DataPositionSelector",
-            "@value": "7"
+            "@value": "3"
           }
         }
       }
     }
   </script>
-  
-  <!--
-  <script type="application/json+ld">
+
+  <script id="annotation_02" type="application/json+ld">
     {
       "id": "annotation_02",
       "@context": "http://www.w3.org/ns/anno.jsonld",
       "created": "2018-05-29T14:40:00",
-      "bodyValue": "Change the paragraph with another thing",
-      "creator": "Gianmarco Spinaci",
-      "target": {
-        "selector": {
-          "startSelector": {
-            "@type": "XPathSelector",
-            "@value": "//section[@role='doc-abstract']/p[1]"
-          },
-          "endSelector": {
-            "@type": "XPathSelector",
-            "@value": "//section[@role='doc-abstract']/p[2]"
-          },
-          "start": {
-            "@type": "DataPositionSelector",
-            "@value": "12"
-          },
-          "end": {
-            "@type": "DataPositionSelector",
-            "@value": "8"
-          }
-        }
-      }
+      "bodyValue": "No, i don't want to",
+      "creator": "RealDonaldTrump",
+      "Motivation": "replying",
+      "target": "annotation_01"
     }
   </script>
-  -->
-  
+
   <!-- /END Semantic annotations -->
 </head>
 
@@ -144,8 +124,8 @@ Under the following terms:
   <!-- Abstract -->
   <section role="doc-abstract">
     <h1>Abstract</h1>
-    <!--<p>The <em>text <strong>of</strong></em></p>-->
-    <p>The text of the abstract.</p>
+    <p>The <em>text <strong>of</strong>  </em> </p>
+    <!--<p>The text of the abstract.</p>-->
     <p>Even if multiple paragraphs.</p>
   </section>
 
