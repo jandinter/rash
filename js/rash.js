@@ -943,21 +943,6 @@ class Annotation {
    */
   _fragmentateAnnotation() {
 
-    /**
-     * 
-     * @param {*} node 
-     */
-    const includesEndingMarker = node => {
-
-      if (node.nodeType == 1) {
-        if (!Array.from(node.children).includes(endMarker))
-          return Array.from(node.children).map(includesEndingMarker)
-
-        else
-          return true
-      }
-    }
-
     // Save the markers
     let startMarker = $(this._getMarkerSelector(this.startSelector.role))[0]
     let endMarker = $(this._getMarkerSelector(this.endSelector.role))[0]
@@ -970,13 +955,12 @@ class Annotation {
     while (next != null && next != endMarker) {
 
       // If the element is a node, that containt the marker at any level
-      if (next.nodeType != 3 && includesEndingMarker(next))
+      if (next.nodeType != 3 && $(next).find(endMarker).length > 0)
         next = next.firstChild
 
       else {
 
         // Add the element that must has to be wrapped, inside the array
-        //if (next.indexOf('\r\n|\r|\n'))
         elements.push(next)
 
         // If the next sibling doesn't exist, go up and look at the next element of the parent
@@ -1001,8 +985,17 @@ class Annotation {
       let text = node.nodeType !== 3 ? node.outerHTML : node.nodeValue
 
       // TODO add the rash-original-content tag
-      if (text.trim().length != 0)
-        $(node).replaceWith(`<span data-rash-annotation-index="${++index}" data-rash-annotation-type="wrap" title="#${this.semanticAnnotation.id}" data-rash-annotation-id="${this.semanticAnnotation.id}" class="cgen annotation_hilight">${text}</span>`)
+      if (text.trim().length != 0) {
+
+        // If the element is a block element, wrap its content inside a wrapper
+        if ($(text).is('p,:header'))
+          $(node).html(`<span data-rash-original-parent-content="${text}" data-rash-annotation-index="${++index}" data-rash-annotation-type="wrap" title="#${this.semanticAnnotation.id}" data-rash-annotation-id="${this.semanticAnnotation.id}" class="cgen annotation_hilight">${$(text).html()}</span>`)
+
+        // Or wrap its content in a note
+        else
+          $(node).replaceWith(`<span data-rash-original-content="${text}" data-rash-annotation-index="${++index}" data-rash-annotation-type="wrap" title="#${this.semanticAnnotation.id}" data-rash-annotation-id="${this.semanticAnnotation.id}" class="cgen annotation_hilight">${text}</span>`)
+      }
+
     })
 
     // Create the side annotation passing the distance of the height
