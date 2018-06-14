@@ -73,7 +73,7 @@ Under the following terms:
 
   <!-- Semantic annotations (https://www.w3.org/TR/annotation-vocab/) -->
 
-  <script id="annotation_01" type="application/json+ld">
+  <script type="application/ld+json">
     {
       "id": "annotation_01",
       "@context": "http://www.w3.org/ns/anno.jsonld",
@@ -103,16 +103,28 @@ Under the following terms:
       }
     }
   </script>
-
-  <script id="annotation_02" type="application/json+ld">
+  
+  <script type="application/ld+json">
     {
       "id": "annotation_02",
       "@context": "http://www.w3.org/ns/anno.jsonld",
-      "created": "2018-05-29T14:40:00",
+      "created": "2018-06-13T15:32:00",
       "bodyValue": "No, i don't want to",
       "creator": "RealDonaldTrump",
       "Motivation": "replying",
       "target": "annotation_01"
+    }
+  </script>
+
+  <script type="application/ld+json">
+    {
+      "id": "annotation_03",
+      "@context": "http://www.w3.org/ns/anno.jsonld",
+      "created": "2018-06-13T15:57:00",
+      "bodyValue": "Well, you should",
+      "creator": "spino9330",
+      "Motivation": "replying",
+      "target": "annotation_02"
     }
   </script>
 
@@ -124,7 +136,13 @@ Under the following terms:
   <!-- Abstract -->
   <section role="doc-abstract">
     <h1>Abstract</h1>
-    <p>The <em>text <strong>o<code>f</code></strong></em></p>
+    <p>The
+      <em>text
+        <strong>o
+          <code>f</code>
+        </strong>
+      </em>
+    </p>
     <!--<p>The text of the abstract.</p>-->
     <p>Even if multiple paragraphs.</p>
   </section>

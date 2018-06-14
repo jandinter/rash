@@ -225,23 +225,34 @@ aside#annotations.active>div.side_note_body {
   display: inline-block;
   position: absolute;
   background-color: white;
-  padding: 15px 10px;
+  padding: 15px 10px 0 15px;;
   width: 95%;
   margin: 0 5px;
   border: 1px solid #ccc;
 }
 
-aside#annotations.active>div.side_note_body p{
-  margin-top: 10px;
+aside#annotations.active>div.side_note_body p {
   font-size: 12px;
-  margin-bottom: 0!important
+  margin-bottom: 0 !important
 }
 
-aside#annotations.active>div.side_note_body .media-list{
+aside#annotations.active>div.side_note_body hr {
+  margin: 10px 0;
+  border: 0;
+  border-top: 1px solid #ccc;
+}
+
+aside#annotations.active>div.side_note_body ul {
+  list-style: none;
+  margin-left: 0px;
+  padding: 0;
+}
+
+aside#annotations.active>div.side_note_body .media-list {
   margin-bottom: 0;
 }
 
-aside#annotations.active>div.side_note_body .side_node_date{
+aside#annotations.active>div.side_note_body .side_node_date {
   color: #999999;
 }
 

@@ -300,7 +300,7 @@ const annotation_sidebar_selector = 'aside#annotations'
 const side_annotation_selector = `${annotation_sidebar_selector}>a.side_note`
 
 const html_annotations_selector = 'span[data-rash-annotation-type=wrap]'
-const semantic_annotation_selector = 'script[type="application/json+ld"]'
+const semantic_annotation_selector = 'script[type="application/ld+json"]'
 const json_value_key = '@value'
 
 /**
@@ -804,7 +804,7 @@ class Annotation {
         break
 
       case replying:
-        console.log(`${this.semanticAnnotation.id} is a replying comment`)
+        this._addReply()
         break
 
     }
@@ -829,11 +829,12 @@ class Annotation {
    */
   _getAnnotationBody() {
     return `
-      <h5 class="media-heading">${this.semanticAnnotation.bodyValue}</h5>
       <p>
+        ${this.semanticAnnotation.bodyValue}<br/>
         <a href="#">@${this.semanticAnnotation.creator}</a><br/>
         <span class="side_node_date">${new Date(this.semanticAnnotation.created).toUTCString()}</span>
-      </p>`
+      </p>
+      `
   }
 
   /**
@@ -853,6 +854,22 @@ class Annotation {
     this._createMarker(this.endElement, this.endSelector)
 
     this._fragmentateAnnotation()
+  }
+
+  /**
+   * 
+   */
+  _addReply() {
+
+    this.startElement = $(`${annotation_sidebar_selector} div[data-rash-annotation-id='${this.semanticAnnotation.target}']`)
+
+    if (!this.startElement.parent().is(annotation_sidebar_selector))
+      this.startElement.parentsUntil(annotation_sidebar_selector)
+
+    if (this.startElement.children('ul').length == 0)
+      this.startElement.append($('<ul></ul>'))
+
+    this.startElement.children('ul').append(`<div data-rash-annotation-id="${this.semanticAnnotation.id}" ><hr/>${this._getAnnotationBody()}</li>`)
   }
 
   /**
@@ -1018,7 +1035,7 @@ class Annotation {
     const annotationPerRow = 1
     const annotationSelector = `span[data-rash-annotation-type="wrap"][data-rash-annotation-id="${this.semanticAnnotation.id}"]`
 
-    const sideAnnotation = $(`<a style="top:${top}px" title="#${this.semanticAnnotation.id}" data-rash-annotation-id="${this.semanticAnnotation.id}" class="cgen side_note">1</a>`)
+    const sideAnnotation = $(`<a style="top:${top}px" title="#${this.semanticAnnotation.id}" data-rash-annotation-id="${this.semanticAnnotation.id}" class="btn btn-default cgen side_note">1</a>`)
 
     const sideAnnotationBody = $(`
       <div style="top:${top-50}px" class="side_note_body" data-rash-annotation-id="${this.semanticAnnotation.id}">${this._getAnnotationBody()}</div>`)
