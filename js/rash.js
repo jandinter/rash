@@ -833,8 +833,7 @@ class Annotation {
         ${this.semanticAnnotation.bodyValue}<br/>
         <a href="#">@${this.semanticAnnotation.creator}</a><br/>
         <span class="side_node_date">${new Date(this.semanticAnnotation.created).toUTCString()}</span>
-      </p>
-      `
+      </p>`
   }
 
   /**
@@ -933,6 +932,9 @@ class Annotation {
 
         // If the node is a textualNode, do the normal behaviour
         else {
+
+          // Collapse all whitespaces in one
+          node.nodeValue = node.nodeValue.replace(/\s+/g, ' ')
 
           // Store the ending offset of the 
           maxOffset += node.length
