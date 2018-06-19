@@ -974,7 +974,7 @@ class Annotation {
     while (next != null && next != endMarker) {
 
       // If the element is a node, that containt the marker at any level
-      if (next.nodeType != 3 && $(next).find(endMarker).length > 0)
+      if (next.nodeType != 3 && ($(next).is('tr,th,td') || $(next).find(endMarker).length > 0))
         next = next.firstChild
 
       else {
@@ -1007,8 +1007,9 @@ class Annotation {
       if (text.trim().length != 0) {
 
         // If the element is a block element, wrap its content inside a wrapper
-        if ($(text).is('p,:header'))
-          $(node).html(`<span data-rash-original-parent-content="${text}" data-rash-annotation-index="${++index}" data-rash-annotation-type="wrap" title="#${this.semanticAnnotation.id}" data-rash-annotation-id="${this.semanticAnnotation.id}" class="cgen annotation_hilight">${$(text).html()}</span>`)
+        //data-rash-original-parent-content="${text}"
+        if ($(node).is('p,:header'))
+          $(node).html(`<span data-rash-annotation-index="${++index}" data-rash-annotation-type="wrap" title="#${this.semanticAnnotation.id}" data-rash-annotation-id="${this.semanticAnnotation.id}" class="cgen annotation_hilight">${$(text).html()}</span>`)
 
         // Or wrap its content in a note
         else
@@ -1021,8 +1022,8 @@ class Annotation {
     this._createSideAnnotation(startMarker)
 
     // Remove the starting and ending markers
-    $(startMarker).remove()
-    $(endMarker).remove()
+    //$(startMarker).remove()
+    //$(endMarker).remove()
   }
 
   /**

@@ -73,7 +73,7 @@ Under the following terms:
 
   <!-- Semantic annotations (https://www.w3.org/TR/annotation-vocab/) -->
 
-  <script type="application/ld+json">
+  <script id="annotation_01" type="application/ld+json">
     {
       "id": "annotation_01",
       "@context": "http://www.w3.org/ns/anno.jsonld",
@@ -85,26 +85,26 @@ Under the following terms:
         "selector": {
           "startSelector": {
             "@type": "XPathSelector",
-            "@value": "//section[1]/p[1]"
+            "@value": "//section[4]//figure[2]/figcaption"
           },
           "endSelector": {
             "@type": "XPathSelector",
-            "@value": "//section[1]/p[1]"
+            "@value": "//section[4]//td[1]/p"
           },
           "start": {
             "@type": "DataPositionSelector",
-            "@value": "0"
+            "@value": "16"
           },
           "end": {
             "@type": "DataPositionSelector",
-            "@value": "10"
+            "@value": "3"
           }
         }
       }
     }
   </script>
 
-  <script type="application/ld+json">
+  <script id="annotation_02" type="application/ld+json">
     {
       "id": "annotation_02",
       "@context": "http://www.w3.org/ns/anno.jsonld",
@@ -116,7 +116,7 @@ Under the following terms:
     }
   </script>
 
-  <script type="application/ld+json">
+  <script id="annotation_03" type="application/ld+json">
     {
       "id": "annotation_03",
       "@context": "http://www.w3.org/ns/anno.jsonld",
@@ -125,6 +125,37 @@ Under the following terms:
       "creator": "spino9330",
       "Motivation": "replying",
       "target": "annotation_02"
+    }
+  </script>
+
+  <script id="annotation_04" type="application/ld+json">
+    {
+      "id": "annotation_04",
+      "@context": "http://www.w3.org/ns/anno.jsonld",
+      "created": "2018-05-29T14:40:00",
+      "bodyValue": "Remove this paragraph",
+      "creator": "spino9330",
+      "Motivation": "commenting",
+      "target": {
+        "selector": {
+          "startSelector": {
+            "@type": "XPathSelector",
+            "@value": "//section[5]/p[1]"
+          },
+          "endSelector": {
+            "@type": "XPathSelector",
+            "@value": "//section[5]/p[1]"
+          },
+          "start": {
+            "@type": "DataPositionSelector",
+            "@value": "0"
+          },
+          "end": {
+            "@type": "DataPositionSelector",
+            "@value": "33"
+          }
+        }
+      }
     }
   </script>
 
