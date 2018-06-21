@@ -223,7 +223,7 @@ aside#annotations.active header>a#toggleSidebar {
 
 aside#annotations.active>div.side_note_body.active {
   display: inline-block;
-  position: absolute;
+  position: relative;
   background-color: white;
   padding: 15px 10px;
   width: 95%;

@@ -1063,8 +1063,6 @@ class Annotation {
 
       sideAnnotation.attr('title', `${sideAnnotation.attr('title')},${this.semanticAnnotation.id}`)
       sideAnnotation.text('2')
-
-      this.top = this.top + sideAnnotation.height() + 40
     }
 
     // Create a new annotation in this way
@@ -1113,7 +1111,7 @@ class Annotation {
 
     // Create annotation body
     const sideAnnotationBody = $(`
-      <div style="top:${this.top-50}px" class="cgen side_note_body" data-rash-annotation-id="${this.semanticAnnotation.id}">${this._getAnnotationBody()}</div>`)
+      <div style="top:${this.top-100}px" class="cgen side_note_body" data-rash-annotation-id="${this.semanticAnnotation.id}">${this._getAnnotationBody()}</div>`)
 
     sideAnnotationBody.on('mouseenter mouseleave', function () {
       $(getWrapAnnotationSelector($(this).attr('data-rash-annotation-id'))).each(function () {
