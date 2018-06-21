@@ -221,11 +221,11 @@ aside#annotations.active header>a#toggleSidebar {
   display: block;
 }
 
-aside#annotations.active>div.side_note_body {
+aside#annotations.active>div.side_note_body.active {
   display: inline-block;
   position: absolute;
   background-color: white;
-  padding: 15px 10px 0 15px;;
+  padding: 15px 10px;
   width: 95%;
   margin: 0 5px;
   border: 1px solid #ccc;

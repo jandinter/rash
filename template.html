@@ -73,6 +73,7 @@ Under the following terms:
 
   <!-- Semantic annotations (https://www.w3.org/TR/annotation-vocab/) -->
 
+  <!--
   <script id="annotation_01" type="application/ld+json">
     {
       "id": "annotation_01",
@@ -153,6 +154,69 @@ Under the following terms:
           "end": {
             "@type": "DataPositionSelector",
             "@value": "33"
+          }
+        }
+      }
+    }
+  </script>
+  -->
+  
+  <script id="annotation_01" type="application/ld+json">
+    {
+      "id": "annotation_01",
+      "@context": "http://www.w3.org/ns/anno.jsonld",
+      "created": "2018-05-29T14:40:00",
+      "bodyValue": "Remove this paragraph",
+      "creator": "spino9330",
+      "Motivation": "commenting",
+      "target": {
+        "selector": {
+          "startSelector": {
+            "@type": "XPathSelector",
+            "@value": "//section[1]/p[1]"
+          },
+          "endSelector": {
+            "@type": "XPathSelector",
+            "@value": "//section[1]/p[1]"
+          },
+          "start": {
+            "@type": "DataPositionSelector",
+            "@value": "0"
+          },
+          "end": {
+            "@type": "DataPositionSelector",
+            "@value": "11"
+          }
+        }
+      }
+    }
+  </script>
+
+  <script id="annotation_02" type="application/ld+json">
+    {
+      "id": "annotation_02",
+      "@context": "http://www.w3.org/ns/anno.jsonld",
+      "created": "2018-06-21T10:43:00",
+      "bodyValue": "I think that I could manage this in a different way.",
+      "creator": "CarloV",
+      "Motivation": "commenting",
+      "target": {
+        "selector": {
+          "startSelector": {
+            "@type": "XPathSelector",
+            "@value": "//section[1]/p[2]"
+          },
+          "endSelector": {
+            "@type": "XPathSelector",
+            "@value": "//section[1]/p[2]"
+          },
+          "start": {
+            "@type": "DataPositionSelector",
+            "@value": "3"
+          },
+          "end": {
+            "@type": "DataPositionSelector",
+            "@value": "20"
           }
         }
       }

@@ -16,6 +16,8 @@
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+let ANNOTATIONS = []
+
 /* Additional jQuery functions */
 jQuery.fn.extend({
   countWords: function () {
@@ -298,6 +300,7 @@ const listingbox_selector = `figure > ${listingbox_selector_pre}`
 
 const annotation_sidebar_selector = 'aside#annotations'
 const side_annotation_selector = `${annotation_sidebar_selector}>a.side_note`
+const sidebody_annotation_selector = `${annotation_sidebar_selector}>div.side_note_body`
 
 const html_annotations_selector = 'span[data-rash-annotation-type=wrap]'
 const semantic_annotation_selector = 'script[type="application/ld+json"]'
@@ -348,6 +351,9 @@ const rash = {
 
     $('a#toggleSidebar').on('click', function () {
       $(annotation_sidebar_selector).toggleClass('active')
+      $(sidebody_annotation_selector).each(function () {
+        $(this).removeClass('active')
+      })
     })
   },
 
@@ -742,7 +748,8 @@ const rash = {
   renderAnnotations: () => {
 
     $(semantic_annotation_selector).each(function () {
-      new Annotation(JSON.parse($(this).html()))
+      let annotation = new Annotation(JSON.parse($(this).html()))
+      ANNOTATIONS.push(annotation)
     })
   },
 
@@ -1031,35 +1038,89 @@ class Annotation {
    */
   _createSideAnnotation(element) {
 
-    const top = $(element).offset().top
-    const height = $(element).height()
+    const getWrapAnnotationSelector = id => `span.cgen.annotation_hilight[data-rash-annotation-id="${id}"]`
 
-    // TODO change the number of annotations per row programmatically
-    const annotationPerRow = 1
-    const annotationSelector = `span[data-rash-annotation-type="wrap"][data-rash-annotation-id="${this.semanticAnnotation.id}"]`
+    /**
+     * 
+     * @param {*} top 
+     */
+    const nearAnnotation = (top) => {
+      for (let annotation of ANNOTATIONS)
+        if (Math.abs(top - annotation.top) < 40)
+          return annotation
+    }
 
-    const sideAnnotation = $(`<a style="top:${top}px" title="#${this.semanticAnnotation.id}" data-rash-annotation-id="${this.semanticAnnotation.id}" class="btn btn-default cgen side_note">1</a>`)
+    // Get the distance from the top of the document
+    this.top = $(element).offset().top
 
-    const sideAnnotationBody = $(`
-      <div style="top:${top-50}px" class="side_note_body" data-rash-annotation-id="${this.semanticAnnotation.id}">${this._getAnnotationBody()}</div>`)
+    let sideAnnotation
 
+    // Check if there is another annotation
+    let annotation = nearAnnotation(this.top)
+    if (typeof annotation != 'undefined') {
+
+      sideAnnotation = $(`a.side_note[data-rash-annotation-id="${annotation.semanticAnnotation.id}"]`)
+
+      sideAnnotation.attr('title', `${sideAnnotation.attr('title')},${this.semanticAnnotation.id}`)
+      sideAnnotation.text('2')
+
+      this.top = this.top + sideAnnotation.height() + 40
+    }
+
+    // Create a new annotation in this way
+    else {
+
+      const height = $(element).height()
+
+      sideAnnotation = $(`<a style="top:${this.top}px" title="${this.semanticAnnotation.id}" data-rash-annotation-id="${this.semanticAnnotation.id}" class="btn btn-default cgen side_note">1</a>`)
+
+      $(annotation_sidebar_selector).append(sideAnnotation)
+    }
+
+    const referencedNotes = sideAnnotation.attr('title').split(',')
+
+    // Remove the previous hover function
+    sideAnnotation.unbind('mouseenter mouseleave click')
+
+    // Add the new hover function
     sideAnnotation.on('mouseenter mouseleave', function () {
-      $(annotationSelector).each(function () {
-        $(this).toggleClass('selected')
-      })
-    })
 
-    sideAnnotationBody.on('mouseenter mouseleave', function () {
-      $(annotationSelector).each(function () {
+      let selector = getWrapAnnotationSelector(referencedNotes[0])
+
+      for (let i = 1; i < referencedNotes.length; i++)
+        selector += `,${getWrapAnnotationSelector(referencedNotes[i])}`
+
+      $(selector).each(function () {
         $(this).toggleClass('selected')
       })
     })
 
     sideAnnotation.on('click', function () {
+
+      const getSelector = id => `div.cgen.side_note_body[data-rash-annotation-id="${id}"]`
+
       $(annotation_sidebar_selector).toggleClass('active')
+
+      let selector = getSelector(referencedNotes[0])
+
+      for (let i = 1; i < referencedNotes.length; i++)
+        selector += `,${getSelector(referencedNotes[i])}`
+
+      $(selector).each(function () {
+        $(this).toggleClass('active')
+      })
     })
 
-    $(annotation_sidebar_selector).append(sideAnnotation)
+    // Create annotation body
+    const sideAnnotationBody = $(`
+      <div style="top:${this.top-50}px" class="cgen side_note_body" data-rash-annotation-id="${this.semanticAnnotation.id}">${this._getAnnotationBody()}</div>`)
+
+    sideAnnotationBody.on('mouseenter mouseleave', function () {
+      $(getWrapAnnotationSelector($(this).attr('data-rash-annotation-id'))).each(function () {
+        $(this).toggleClass('selected')
+      })
+    })
+
     $(annotation_sidebar_selector).append(sideAnnotationBody)
   }
 }
