@@ -1,8 +1,8 @@
 /*
- * rash.js - Version 0.7, May 29, 2018
+ * rash.js - Version Version 0.7, June, 2018
  * Copyright (c) 2014-2018, Silvio Peroni <essepuntato@gmail.com> 
  * 
- * with precious contributions by Ruben Verborgh and Vincenzo Rubano.
+ * with precious contributions by Ruben Verborgh, Vincenzo Rubano and Gianmarco Spinaci
  * 
  * Permission to use, copy, modify, and/or distribute this software for any purpose with 
  * or without fee is hereby granted, provided that the above copyright notice and this 
