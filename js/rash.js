@@ -346,6 +346,7 @@ const rash = {
     annotation_sidebar.prependTo($('body'))
 
     $('a#toggleAnnotations').on('click', function () {
+      $(annotation_sidebar_selector).removeClass('active')
       rash.toggleAnnotations($(this))
     })
 
