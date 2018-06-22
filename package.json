@@ -1,0 +1,22 @@
+{
+  "name": "rash",
+  "version": "0.7.0",
+  "description": "Research Articles in Simplified HTML (RASH) Framework includes a markup language defined as a subset of HTML+RDF for writing scientific articles, and related tools to convert it into different formats, to extract data from it, etc.",
+  "main": "template.html",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rash-framework/rash.git"
+  },
+  "author": "essepuntato",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rash-framework/rash/issues"
+  },
+  "homepage": "https://github.com/rash-framework/rash#readme"
+}
