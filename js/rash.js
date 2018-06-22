@@ -843,7 +843,7 @@ class Annotation {
       <p>
         ${this.semanticAnnotation.bodyValue}<br/>
         <a href="#">@${this.semanticAnnotation.creator}</a><br/>
-        <span class="side_node_date">${new Date(this.semanticAnnotation.created).toUTCString()}</span>
+        <span class="side_node_date">${new Date(this.semanticAnnotation.created).toUTCString().replace(':00 GMT','')}</span>
       </p>`
   }
 
@@ -1055,7 +1055,7 @@ class Annotation {
     }
 
     // Get the distance from the top of the document
-    this.top = $(element).offset().top
+    this.top = $(element).offset().top - 25
 
     let sideAnnotation
 
@@ -1117,7 +1117,7 @@ class Annotation {
 
     // Create annotation body
     const sideAnnotationBody = $(`
-      <div style="top:${this.top-100}px" class="cgen side_note_body" data-rash-annotation-id="${this.semanticAnnotation.id}">${this._getAnnotationBody()}</div>`)
+      <div style="top:${this.top}px" class="cgen side_note_body" data-rash-annotation-id="${this.semanticAnnotation.id}">${this._getAnnotationBody()}</div>`)
 
     sideAnnotationBody.on('mouseenter mouseleave', function () {
       $(getWrapAnnotationSelector($(this).attr('data-rash-annotation-id'))).each(function () {
