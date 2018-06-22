@@ -227,7 +227,7 @@ aside#annotations.active>div.side_note_body.active {
   background-color: white;
   padding: 15px 10px;
   width: 95%;
-  margin: 0 5px;
+  margin: 5px;
   border: 1px solid #ccc;
 }
 

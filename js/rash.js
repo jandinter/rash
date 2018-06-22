@@ -1046,7 +1046,7 @@ class Annotation {
      */
     const nearAnnotation = (top) => {
       for (let annotation of ANNOTATIONS)
-        if (Math.abs(top - annotation.top) < 40)
+        if (Math.abs(top - annotation.top) < 100)
           return annotation
     }
 
@@ -1062,7 +1062,9 @@ class Annotation {
       sideAnnotation = $(`a.side_note[data-rash-annotation-id="${annotation.semanticAnnotation.id}"]`)
 
       sideAnnotation.attr('title', `${sideAnnotation.attr('title')},${this.semanticAnnotation.id}`)
-      sideAnnotation.text('2')
+      sideAnnotation.text(1 + parseInt(sideAnnotation.text()))
+
+      this.top = annotation.top
     }
 
     // Create a new annotation in this way
